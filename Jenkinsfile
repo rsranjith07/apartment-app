@@ -7,31 +7,23 @@ pipeline {
 
     stages {
 
-        stage('Clone') {
+        stage('Build') {
             steps {
-                https://github.com/rsranjith07/apartment-app.git
+                sh '''
+                docker build -t $DOCKER_HUB/apartment-frontend:latest ./frontend
+                docker build -t $DOCKER_HUB/apartment-backend:latest ./backend
+                '''
             }
         }
 
-        stage('Build Images') {
+        stage('Push') {
             steps {
-                sh 'docker build -t $DOCKER_HUB/apartment-frontend:latest ./frontend'
-                sh 'docker build -t $DOCKER_HUB/apartment-backend:latest ./backend'
+                sh '''
+                docker push $DOCKER_HUB/apartment-frontend:latest
+                docker push $DOCKER_HUB/apartment-backend:latest
+                '''
             }
         }
 
-        stage('Push Images') {
-            steps {
-                sh 'docker push $DOCKER_HUB/apartment-frontend:latest'
-                sh 'docker push $DOCKER_HUB/apartment-backend:latest'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sh 'docker-compose down || true'
-                sh 'docker-compose up -d'
-            }
-        }
     }
 }
