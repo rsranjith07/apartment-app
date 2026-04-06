@@ -1,4 +1,4 @@
-name: Auto Deploy
+name: 🚀 Local Auto Deploy
 
 on:
   push:
@@ -7,33 +7,31 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout Code
+      - name: 📥 Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup SSH
+      - name: 📁 Go to Project
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          cd ~/apartment-app
 
-      - name:  Deploy to Server
+      - name: 📥 Pull Latest Code
         run: |
-          ssh ${{ secrets.USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /home/ubuntu/your-repo
+          cd ~/apartment-app
+          git pull origin main
 
-            echo "Pull latest code"
-            git pull origin main
+      - name: 📦 Install Frontend
+        run: |
+          cd ~/apartment-app/frontend
+          npm install
 
-            echo "Install dependencies"
-            npm install
+      - name: 🏗️ Build Frontend
+        run: |
+          cd ~/apartment-app/frontend
+          npm run build
 
-            echo "Build app"
-            npm run build
-
-            echo "🔄 Restart app"
-            pm2 restart all
-          EOF
+      - name: 🔄 Restart App
+        run: |
+          pm2 restart all || echo "pm2 not running"
