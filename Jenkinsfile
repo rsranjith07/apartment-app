@@ -1,19 +1,17 @@
 pipeline {
     agent any
 
-    options {
-        buildUserVars()
-    }
-
     stages {
 
         stage('User Validation') {
             steps {
-                script {
-                    echo "Triggered by: ${env.BUILD_USER_ID}"
+                wrap([$class: 'BuildUser']) {
+                    script {
+                        echo "Triggered by: ${env.BUILD_USER_ID}"
 
-                    if (env.BUILD_USER_ID == null || env.BUILD_USER_ID != "devops1") {
-                        error "❌ Only DevOps can deploy"
+                        if (env.BUILD_USER_ID == null || env.BUILD_USER_ID != "devops1") {
+                            error "❌ Only DevOps can deploy"
+                        }
                     }
                 }
             }
