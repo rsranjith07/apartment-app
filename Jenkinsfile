@@ -1,14 +1,16 @@
 pipeline {
     agent any
 
+    options {
+        buildUserVars()
+    }
+
     stages {
 
         stage('User Validation') {
             steps {
                 script {
-                    def user = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)?.getUserId()
-
-                    if (user != "devops1") {
+                    if (env.BUILD_USER_ID == null || env.BUILD_USER_ID != "devops1") {
                         error "❌ Only DevOps can deploy"
                     }
                 }
