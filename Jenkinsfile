@@ -9,8 +9,10 @@ pipeline {
                     script {
                         echo "Triggered by: ${env.BUILD_USER_ID}"
 
-                        if (env.BUILD_USER_ID == null || env.BUILD_USER_ID != "devops1") {
-                            error "❌ Only DevOps can deploy"
+                        if (env.BUILD_USER_ID?.toLowerCase() != "devops1") {
+                         error "❌ Only DevOps can deploy"
+                          }
+                            
                         }
                     }
                 }
