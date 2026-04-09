@@ -10,9 +10,7 @@ pipeline {
                         echo "Triggered by: ${env.BUILD_USER_ID}"
 
                         if (env.BUILD_USER_ID?.toLowerCase() != "devops1") {
-                         error "❌ Only DevOps can deploy"
-                          }
-                            
+                            error "❌ Only DevOps can deploy"
                         }
                     }
                 }
@@ -30,5 +28,6 @@ pipeline {
                 echo "🚀 Deploy success"
             }
         }
+
     }
 }
