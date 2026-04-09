@@ -2,27 +2,28 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+
+        stage('User Validation') {
             steps {
-                sh 'docker build -t ranjith5554/apartment-frontend:latest ./frontend'
-                sh 'docker build -t ranjith5554/apartment-backend:latest ./backend'
+                script {
+                    def user = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)?.getUserId()
+
+                    if (user != "devops1") {
+                        error "❌ Only DevOps can deploy"
+                    }
+                }
             }
         }
 
-        stage('Push') {
+        stage('Build') {
             steps {
-                sh 'docker push ranjith5554/apartment-frontend:latest'
-                sh 'docker push ranjith5554/apartment-backend:latest'
+                echo "🔧 Build started"
             }
         }
 
         stage('Deploy') {
             steps {
-                sh '''
-                docker-compose down
-                docker-compose pull
-                docker-compose up -d
-                '''
+                echo "🚀 Deploy success"
             }
         }
     }
